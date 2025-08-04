@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ALL MAIL</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- GNB -->
+  <header class="gnb">
+    <img src="logo/gnb_Logo.png" alt="로고" class="gnb-logo">
+    <input type="text" class="search-bar" placeholder="확인하고 싶은 규정 정보를 검색해보세요">
+    <button class="search-btn"></button>
+    <div class="gnb-right">
+      <div class="alarm-container">
+        <img src="icon/ic_alarm_new_48.png" alt="알림" class="alarm-icon">
+      </div>
+      <div class="dept-dropdown">
+        <button class="dept-name-toggle">
+          <span class="dept-name">전략본부</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="dept-menu">
+          <button class="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 좌측 메뉴 -->
+    <aside class="sidebar">
+      <button class="tab selected">KKAEBEE</button>
+      <button class="tab">DEPARTMENT</button>
+      <button class="tab orange">ALL MAIL</button>
+      <button class="tab">IMPORTANT</button>
+    </aside>
+
+    <!-- 메일 목록 -->
+    <section class="mail-list">
+      <h1>메일함</h1>
+      <p class="mail-count">전체 00건</p>
+
+      <ul class="mail-items">
+        <li class="mail-item unread">
+          <span class="badge orange">금융위</span>
+          <span class="mail-title">금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다</span>
+          <span class="mail-date">2025.06.18</span>
+          <button class="mail-star">☆</button>
+        </li>
+        <li class="mail-item">
+          <span class="badge orange">금융위</span>
+          <span class="mail-title">금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다</span>
+          <span class="mail-date">2025.06.18</span>
+          <button class="mail-star">☆</button>
+        </li>
+        <li class="mail-item unread">
+          <span class="badge yellow">금감원</span>
+          <span class="mail-title">금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다</span>
+          <span class="mail-date">2025.06.18</span>
+          <button class="mail-star">☆</button>
+        </li>
+        <!-- 이하 동일한 형식으로 추가 -->
+      </ul>
+
+      <!-- 페이지네이션 -->
+      <div class="pagination">
+        <button>〈</button>
+        <button class="active">1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>4</button>
+        <button>5</button>
+        <button>〉</button>
+      </div>
+    </section>
+  </main>
+</body>
+<script src="script.js"></script>
+
+</html>
