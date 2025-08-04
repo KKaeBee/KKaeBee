@@ -16,8 +16,9 @@ body {
 }
 
 .gnb-logo {
-  height: 20px;
-  margin-right: 40px;
+  height: 24px;
+  margin-left: 20px;
+  margin-right: 110px;
 }
 
 .search-bar {
@@ -146,9 +147,15 @@ body {
   border-radius: 4px;
 }
 
+.tab:hover {
+  background-color: #D9D8D4;
+  box-shadow: 0 1px 2px #b2ada3;
+}
+
 .tab.selected {
-  background: #444;
+  background: linear-gradient(135deg, #6a665f, #d2cfc9); /* 그라데이션 */
   color: white;
+  border-radius: 4px;
 }
 
 .tab.orange {
@@ -243,7 +250,6 @@ body {
   color: #F8B400; /* 꽉 찬 별 색상 */
 }
 
-
 .pagination {
   margin-top: 20px;
   text-align: center;
@@ -301,4 +307,14 @@ body {
 
 .alarm-dropdown span {
   color: #777;
+}
+
+a.tab {
+  text-decoration: none;      /* 밑줄 제거 */
+  color: inherit;             /* 부모 요소의 글자색 사용 */
+  display: block;             /* 버튼처럼 영역 전체 클릭 가능하게 */
+}
+
+a.tab:hover {
+  opacity: 0.9;               /* 선택적: 마우스오버 효과 */
 }
