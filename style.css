@@ -123,18 +123,23 @@ body {
 
 .container {
   display: flex;
-  background: #eee;
+  background: #ffffff;
   height: calc(100vh - 60px);
 }
 
 .sidebar {
   width: 180px;
-  background: #eee;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   padding: 20px 0;
   margin: 10px;
   gap: 10px;
+}
+
+.sidebar-separator {
+  width: 150px;
+  background-color: #edeef1;
 }
 
 .tab {
@@ -152,11 +157,11 @@ body {
   box-shadow: 0 1px 2px #b2ada3;
 }
 
-.tab.selected {
-  background: linear-gradient(135deg, #6a665f, #d2cfc9); /* 그라데이션 */
+/* .tab.selected {
+  background: linear-gradient(135deg, #6a665f, #d2cfc9);
   color: white;
   border-radius: 4px;
-}
+} */
 
 .tab.orange {
   background: #F5A623;

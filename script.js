@@ -52,17 +52,17 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       {
         from: "금융위",
-        title: "금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다",
+        title: "자본시장조사 업무규정 규제영향분석서가 업로드 되었습니다",
         date: "2025.07.02"
       },
       {
         from: "금감원",
-        title: "금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다",
+        title: "보험업감독업무시행세칙 사전예고안_최종이 업로드 되었습니다",
         date: "2025.07.10"
       },
       {
         from: "금감원",
-        title: "금융지주회사감독규정시행세칙 개정안 관련 안내",
+        title: "사전예고안_자산운용감독국 자산운용총괄팀_금융투자업규정시행세칙이 업로드 되었습니다",
         date: "2025.08.04"
       }
     ];
@@ -118,4 +118,46 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
+  const departmentList = document.getElementById("department-list");
+  if (departmentList) {
+    const departmentMails = [
+      {
+        from: "금융위",
+        title: "금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다",
+        date: "2025.06.18",
+        starred: false
+      },
+      {
+        from: "금융위",
+        title: "금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다",
+        date: "2025.06.18",
+        starred: true
+      },
+      {
+        from: "금감원",
+        title: "금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다",
+        date: "2025.06.18",
+        starred: true
+      },
+      {
+        from: "금감원",
+        title: "금융지주회사감독규정시행세칙 개정안 관련 안내",
+        date: "2025.06.18",
+        starred: false
+      }
+    ];
+
+    departmentMails.forEach(mail => {
+      const li = document.createElement("li");
+      li.className = "mail-item";
+      li.innerHTML = `
+        <span class="badge ${mail.from === "금융위" ? "orange" : "yellow"}">${mail.from}</span>
+        <span class="mail-title">${mail.title}</span>
+        <span class="mail-date">${mail.date}</span>
+        <button class="mail-star ${mail.starred ? "active" : ""}">${mail.starred ? "★" : "☆"}</button>
+      `;
+      departmentList.appendChild(li);
+    });
+  }
 });
