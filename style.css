@@ -318,3 +318,52 @@ a.tab {
 a.tab:hover {
   opacity: 0.9;               /* 선택적: 마우스오버 효과 */
 }
+
+/* 메일 상세 화면 관련 */
+.mail-detail {
+  padding: 24px;
+  flex: 1;
+}
+
+.mail-detail h1 {
+  font-size: 24px;
+  margin: 8px 0;
+}
+
+.mail-date {
+  color: gray;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.mail-summary ol {
+  margin-left: 20px;
+}
+
+.mail-summary ul {
+  list-style: disc;
+  margin-left: 20px;
+}
+
+.checklist {
+  margin-left: 20px;
+  list-style: square;
+}
+
+.origin-link {
+  display: inline-block;
+  margin-top: 12px;
+  text-decoration: underline;
+  color: #007bff;
+}
+
+.back-btn-wrap {
+  margin-top: 32px;
+}
+
+.back-btn {
+  padding: 8px 16px;
+  background-color: #e0e0e0;
+  border: none;
+  cursor: pointer;
+}
