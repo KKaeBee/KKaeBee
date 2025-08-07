@@ -152,11 +152,11 @@ body {
   box-shadow: 0 1px 2px #b2ada3;
 }
 
-.tab.selected {
-  background: linear-gradient(135deg, #6a665f, #d2cfc9); /* 그라데이션 */
+/* .tab.selected {
+  background: linear-gradient(135deg, #6a665f, #d2cfc9);
   color: white;
   border-radius: 4px;
-}
+} */
 
 .tab.orange {
   background: #F5A623;
