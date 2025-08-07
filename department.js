@@ -68,6 +68,12 @@ function renderPagination() {
   pagination.innerHTML = "";
 
   const totalPages = Math.ceil(allMails.length / mailsPerPage);
+  const pagesPerGroup = 5;
+
+  const currentGroup = Math.floor((currentPage - 1) / pagesPerGroup);
+  const startPage = currentGroup * pagesPerGroup + 1;
+  let endPage = startPage + pagesPerGroup - 1;
+  if (endPage > totalPages) endPage = totalPages;
 
   const prevBtn = document.createElement("button");
   prevBtn.innerHTML = "〈";
@@ -81,21 +87,6 @@ function renderPagination() {
   });
   pagination.appendChild(prevBtn);
 
-
-  let startPage = Math.max(1, currentPage - 2);
-  let endPage = Math.min(totalPages, currentPage + 2);
-
-  if (totalPages <= 5) {
-    startPage = 1;
-    endPage = totalPages;
-  } else if (endPage - startPage < 4) {
-    if (startPage === 1) {
-      endPage = Math.min(totalPages, startPage + 4);
-    } else if (endPage === totalPages) {
-      startPage = Math.max(1, endPage - 4);
-    }
-  }
-
   for (let i = startPage; i <= endPage; i++) {
     const btn = document.createElement("button");
     btn.textContent = i;
@@ -107,7 +98,6 @@ function renderPagination() {
     });
     pagination.appendChild(btn);
   }
-
 
   const nextBtn = document.createElement("button");
   nextBtn.innerHTML = "〉";

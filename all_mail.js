@@ -63,6 +63,12 @@ function renderPagination() {
   pagination.innerHTML = "";
 
   const totalPages = Math.ceil(allMails.length / mailsPerPage);
+  const pagesPerGroup = 5;
+
+  const currentGroup = Math.floor((currentPage - 1) / pagesPerGroup);
+  const startPage = currentGroup * pagesPerGroup + 1;
+  let endPage = startPage + pagesPerGroup - 1;
+  if (endPage > totalPages) endPage = totalPages;
 
   const prevBtn = document.createElement("button");
   prevBtn.innerHTML = "〈";
@@ -75,18 +81,6 @@ function renderPagination() {
     }
   });
   pagination.appendChild(prevBtn);
-
-  let startPage = Math.max(1, currentPage - 2);
-  let endPage = Math.min(totalPages, currentPage + 2);
-
-  // 페이지 수가 5개보다 작을 때 보정
-  if (endPage - startPage < 4) {
-    if (startPage === 1) {
-      endPage = Math.min(totalPages, startPage + 4);
-    } else if (endPage === totalPages) {
-      startPage = Math.max(1, endPage - 4);
-    }
-  }
 
   for (let i = startPage; i <= endPage; i++) {
     const btn = document.createElement("button");
@@ -112,7 +106,6 @@ function renderPagination() {
   });
   pagination.appendChild(nextBtn);
 }
-
 
 async function fetchSearchResults(keyword) {
   try {
