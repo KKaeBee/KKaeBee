@@ -9,11 +9,33 @@
 
 <body>
   <!-- GNB -->
-  <div id="gnb-container"></div>
+  <header class="gnb">
+    <img src="logo/gnb_Logo.png" alt="로고" class="gnb-logo">
+    <input type="text" class="search-bar" placeholder="확인하고 싶은 규정 정보를 검색해보세요">
+    <button class="search-btn"></button>
+    <div class="gnb-right">
+      <div class="alarm-container">
+        <img src="icon/ic_alarm_new_48.png" alt="알림" class="alarm-icon">
+      </div>
+      <div class="dept-dropdown">
+        <button class="dept-name-toggle">
+          <span class="dept-name">전략본부</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="dept-menu">
+          <button class="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <main class=" container">
     <!-- 좌측 메뉴 -->
-    <div class="sidebar"></div>
+    <aside class="sidebar">
+      <a href="#" class="tab">DEPARTMENT</a>
+      <a href="all_mail.html" class="tab orange">ALL MAIL</a>
+      <a href="important.html" class="tab">IMPORTANT</a>
+    </aside>
 
     <div class="sidebar-separator"></div>
 
@@ -35,7 +57,6 @@
         <button>4</button>
         <button>5</button>
         <button>〉</button>
-        >>>>>>> 043d9c2aa072d7bfa16ded2c98d8de8fab2f1372
       </div>
 
     </section>
