@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const deptId = localStorage.getItem("dept_id");
+  const deptId = sessionStorage.getItem("department_id");
+
 
   if (!deptId) {
     alert("로그인이 필요합니다.");
