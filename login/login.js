@@ -18,12 +18,20 @@ loginForm.addEventListener("submit", async function (e) {
             body: JSON.stringify({ name, password })
         });
 
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.message || "로그인 실패");
+        }
+
         const data = await res.json();
         console.log("로그인 성공:", data);
 
+        sessionStorage.setItem("department_id", data.department_id);
+        sessionStorage.setItem("department_name", data.name);
+
         window.location.href = "../department.html";
     } catch (err) {
-        console.error("로그인 오류:", err);
-        alert("로그인에 실패했습니다. 아이디/비밀번호를 확인하세요.");
+        console.error("로그인 오류:", err.message);
+        alert("로그인에 실패했습니다. " + err.message);
     }
 });
