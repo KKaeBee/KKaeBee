@@ -26,13 +26,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // 부서명(전략본부) 클릭 시 로그아웃 버튼 드롭다운 토글
+  // 부서명 표시
+  const deptName = localStorage.getItem("deptName");
+  const deptNameSpan = document.querySelector(".dept-name");
+  if (deptName && deptNameSpan) {
+    deptNameSpan.textContent = deptName;
+  }
+
+  // 부서명 클릭 시 로그아웃 버튼 드롭다운 토글
   const deptToggleBtn = document.querySelector(".dept-name-toggle");
   const deptMenu = document.querySelector(".dept-menu");
 
   deptToggleBtn?.addEventListener("click", function (e) {
     e.stopPropagation();
     deptMenu.classList.toggle("show");
+  });
+
+  // 로그아웃 버튼 클릭 시 localStorage 초기화 및 로그인 페이지 이동
+  const logoutBtn = document.querySelector(".logout-btn");
+  logoutBtn?.addEventListener("click", function () {
+    localStorage.removeItem("deptName");
+    window.location.href = "../login/login.html"; // 로그인 페이지로 이동
   });
 
   // 바깥 영역 클릭 시 알림/부서 드롭다운 모두 닫기

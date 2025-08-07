@@ -28,7 +28,10 @@ loginForm.addEventListener("submit", async function (e) {
 
         sessionStorage.setItem("department_id", data.department_id);
         sessionStorage.setItem("department_name", data.name);
+         // 부서명 localStorage에 저장
+        localStorage.setItem("deptName", name);
 
+        
         window.location.href = "../department.html";
     } catch (err) {
         console.error("로그인 오류:", err.message);
