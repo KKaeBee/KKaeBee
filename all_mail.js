@@ -50,3 +50,57 @@ function renderMailList(mails) {
 }
 
 document.addEventListener("DOMContentLoaded", fetchAllMails);
+
+// all mail 검색 api 호출
+async function fetchSearchResults(keyword) {
+  try { // 세션에서 로그인 정보 가져오기
+    const departmentId = sessionStorage.getItem("department_id");
+    if (!departmentId) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    const scope = 'all';
+
+    if (!keyword) { // 검색어가 비어 있으면 다시 전체 메일
+      fetchAllMails();
+      return;
+    }
+
+    const res = await fetch(`${API_BASE}/api/notices/search?department_id=${departmentId}&keyword=${encodeURIComponent(keyword)}&scope=${scope}`, {
+      headers: {
+        Accept: "application/json"
+      }
+    });
+
+    if (!res.ok) throw new Error("검색 실패");
+
+    const searchResults = await res.json();
+    renderMailList(searchResults);
+
+  } catch (err) {
+    console.error("검색 실패:", err);
+    alert("검색 중 오류가 발생했습니다.");
+  }
+}
+
+// all mail 검색창 이벤트 리스너
+document.addEventListener("DOMContentLoaded", () => {
+  fetchAllMails();
+
+  const searchBtn = document.querySelector('.search-btn');
+  const searchInput = document.querySelector('.search-bar');
+
+  searchBtn.addEventListener('click', () => {
+    const keyword = searchInput.value.trim();
+    fetchSearchResults(keyword);
+  });
+
+  // Enter 키로도 검색 가능하게
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const keyword = searchInput.value.trim();
+      fetchSearchResults(keyword);
+    }
+  });
+});
