@@ -1,163 +1,113 @@
-document.addEventListener("DOMContentLoaded", function () {
-  // 알림 아이콘 클릭 시 드롭다운 생성 및 토글 표시
-  const alarmIcon = document.querySelector(".alarm-icon");
-  const alarmCount = document.querySelector(".alarm-count");
+// gnb.html, sidebar.html 외부 HTML 불러오기 함수
+function includeHTML(selector, url, callback) {
+  fetch(url)
+    .then((res) => res.text())
+    .then((data) => {
+      document.querySelector(selector).innerHTML = data;
+      if (typeof callback === "function") callback();
+    });
+}
 
-  const alarmDropdown = document.createElement("div");
-  alarmDropdown.className = "alarm-dropdown";
-  alarmDropdown.innerHTML = `
-    <ul>
-      <li><strong>금융감독원 최근 제개정 정보</strong><br><span>금융지주회사감독규정시행세칙 개정안...</span></li>
-      <li><strong>금융위원회</strong><br><span>금융지주회사감독규정시행세칙 개정안...</span></li>
-      <li><strong>금융감독원 세칙 제개정 예고</strong><br><span>금융지주회사감독규정시행세칙 개정안...</span></li>
-    </ul>
-  `;
-  alarmDropdown.style.display = "none";
-  document.querySelector(".alarm-container")?.appendChild(alarmDropdown);
+document.addEventListener("DOMContentLoaded", () => {
+  // GNB 불러오기 + 알림/부서 드롭다운 이벤트 연결
+  includeHTML(".gnb", "gnb.html", () => {
+    const alarmIcon = document.querySelector(".alarm-icon");
+    const alarmCount = document.querySelector(".alarm-count");
 
-  alarmIcon?.addEventListener("click", function (e) {
-    e.stopPropagation();
-    const isVisible = alarmDropdown.style.display === "block";
-    alarmDropdown.style.display = isVisible ? "none" : "block";
+    // 알림 드롭다운 생성
+    const alarmDropdown = document.createElement("div");
+    alarmDropdown.className = "alarm-dropdown";
+    alarmDropdown.innerHTML = `
+      <ul>
+        <li><strong>금융감독원 최근 제개정 정보</strong><br><span>금융지주회사감독규정시행세칙 개정안...</span></li>
+        <li><strong>금융위원회</strong><br><span>금융지주회사감독규정시행세칙 개정안...</span></li>
+        <li><strong>금융감독원 세칙 제개정 예고</strong><br><span>금융지주회사감독규정시행세칙 개정안...</span></li>
+      </ul>
+    `;
+    alarmDropdown.style.display = "none";
+    document.querySelector(".alarm-container")?.appendChild(alarmDropdown);
 
-    if (!isVisible) {
-      alarmIcon.src = "icon/ic_alarm_48.png";
-      if (alarmCount) alarmCount.style.display = "none";
+    alarmIcon?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isVisible = alarmDropdown.style.display === "block";
+      alarmDropdown.style.display = isVisible ? "none" : "block";
+
+      if (!isVisible) {
+        alarmIcon.src = "icon/ic_alarm_48.png";
+        if (alarmCount) alarmCount.style.display = "none";
+      }
+    });
+
+    // 부서 이름 클릭 시 로그아웃 버튼 드롭다운
+    const deptToggleBtn = document.querySelector(".dept-name-toggle");
+    const deptMenu = document.querySelector(".dept-menu");
+
+    deptToggleBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deptMenu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", () => {
+      if (alarmDropdown) alarmDropdown.style.display = "none";
+      if (deptMenu) deptMenu.classList.remove("show");
+    });
+  });
+
+  // 사이드바 불러오기 + 탭 색상 토글
+  includeHTML(".sidebar", "sidebar.html", () => {
+    const tabs = document.querySelectorAll(".tab");
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.classList.remove("orange"));
+        tab.classList.add("orange");
+      });
+    });
+  });
+
+  // 페이지네이션 버튼 클릭 처리
+  const paginationContainer = document.querySelector(".pagination");
+  paginationContainer?.addEventListener("click", (e) => {
+    const target = e.target;
+    if (target.tagName !== "BUTTON") return;
+
+    const active = paginationContainer.querySelector("button.active");
+
+    // ← 버튼
+    if (target.classList.contains("prev")) {
+      const prevBtn = active?.previousElementSibling;
+      if (prevBtn && !prevBtn.classList.contains("prev")) {
+        active.classList.remove("active");
+        prevBtn.classList.add("active");
+      }
+    }
+
+    // → 버튼
+    else if (target.classList.contains("next")) {
+      const nextBtn = active?.nextElementSibling;
+      if (nextBtn && !nextBtn.classList.contains("next")) {
+        active.classList.remove("active");
+        nextBtn.classList.add("active");
+      }
+    }
+
+    // 숫자 클릭
+    else if (!isNaN(target.textContent)) {
+      paginationContainer.querySelectorAll("button").forEach((b) => b.classList.remove("active"));
+      target.classList.add("active");
     }
   });
 
-  // 부서명(전략본부) 클릭 시 로그아웃 버튼 드롭다운 토글
-  const deptToggleBtn = document.querySelector(".dept-name-toggle");
-  const deptMenu = document.querySelector(".dept-menu");
+  // 별표 클릭 시 토글 (전체 적용)
+  document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("mail-star")) {
+      e.target.classList.toggle("active");
+      e.target.textContent = e.target.classList.contains("active") ? "★" : "☆";
 
-  deptToggleBtn?.addEventListener("click", function (e) {
-    e.stopPropagation();
-    deptMenu.classList.toggle("show");
-  });
-
-  // 바깥 영역 클릭 시 알림/부서 드롭다운 모두 닫기
-  document.addEventListener("click", function () {
-    if (alarmDropdown) alarmDropdown.style.display = "none";
-    if (deptMenu) deptMenu.classList.remove("show");
-  });
-
-  // 중요 메일 페이지일 경우: starredMails를 렌더링
-  const importantList = document.getElementById("important-list");
-  if (importantList) {
-    const starredMails = [
-      {
-        from: "금융위",
-        title: "금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다",
-        date: "2025.06.18"
-      },
-      {
-        from: "금융위",
-        title: "자본시장조사 업무규정 규제영향분석서가 업로드 되었습니다",
-        date: "2025.07.02"
-      },
-      {
-        from: "금감원",
-        title: "보험업감독업무시행세칙 사전예고안_최종이 업로드 되었습니다",
-        date: "2025.07.10"
-      },
-      {
-        from: "금감원",
-        title: "사전예고안_자산운용감독국 자산운용총괄팀_금융투자업규정시행세칙이 업로드 되었습니다",
-        date: "2025.08.04"
+      const isImportantPage = location.pathname.includes("important.html");
+      if (isImportantPage && !e.target.classList.contains("active")) {
+        const li = e.target.closest("li");
+        if (li) li.remove();
       }
-    ];
-
-    starredMails.forEach(mail => {
-      const li = document.createElement("li");
-      li.className = "mail-item";
-      li.innerHTML = `
-        <span class="badge ${mail.from === "금융위" ? "orange" : "yellow"}">${mail.from}</span>
-        <span class="mail-title">${mail.title}</span>
-        <span class="mail-date">${mail.date}</span>
-        <button class="mail-star active">★</button>
-      `;
-      importantList.appendChild(li);
-    });
-  }
-
-  // 메일 항목 클릭 시 읽지 않음 표시 제거
-  const mailItems = document.querySelectorAll(".mail-item");
-  mailItems.forEach((item) => {
-    item.addEventListener("click", () => {
-      item.classList.remove("unread");
-    });
-  });
-
-  // 별표 아이콘 클릭 시 즐겨찾기 토글 (★/☆)
-  const stars = document.querySelectorAll(".mail-star");
-  stars.forEach(star => {
-    star.addEventListener("click", function (e) {
-  e.stopPropagation();
-  if (star.classList.contains("active")) {
-    star.classList.remove("active");
-    star.textContent = "☆";
-
-    // 중요 메일 페이지에서는 비활성화 시 메일 삭제
-    if (document.getElementById("important-list")) {
-      star.closest(".mail-item")?.remove();
     }
-  } else {
-    star.classList.add("active");
-    star.textContent = "★";
-  }
-});
   });
-
-  // 페이지네이션 버튼 클릭 시 active 클래스 변경
-  const paginationButtons = document.querySelectorAll(".pagination button");
-  paginationButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      if (!isNaN(btn.textContent)) {
-        paginationButtons.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-      }
-    });
-  });
-
-  const departmentList = document.getElementById("department-list");
-  if (departmentList) {
-    const departmentMails = [
-      {
-        from: "금융위",
-        title: "금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다",
-        date: "2025.06.18",
-        starred: false
-      },
-      {
-        from: "금융위",
-        title: "금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다",
-        date: "2025.06.18",
-        starred: true
-      },
-      {
-        from: "금감원",
-        title: "금융지주회사감독규정시행세칙 개정안이 업데이트 되었습니다",
-        date: "2025.06.18",
-        starred: true
-      },
-      {
-        from: "금감원",
-        title: "금융지주회사감독규정시행세칙 개정안 관련 안내",
-        date: "2025.06.18",
-        starred: false
-      }
-    ];
-
-    departmentMails.forEach(mail => {
-      const li = document.createElement("li");
-      li.className = "mail-item";
-      li.innerHTML = `
-        <span class="badge ${mail.from === "금융위" ? "orange" : "yellow"}">${mail.from}</span>
-        <span class="mail-title">${mail.title}</span>
-        <span class="mail-date">${mail.date}</span>
-        <button class="mail-star ${mail.starred ? "active" : ""}">${mail.starred ? "★" : "☆"}</button>
-      `;
-      departmentList.appendChild(li);
-    });
-  }
 });
