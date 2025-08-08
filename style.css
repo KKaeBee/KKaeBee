@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: 'Pretendard', sans-serif;
-  background: #F4F5F7;
+  background: #FFFFFF;
 }
 
 .gnb {
@@ -129,12 +129,17 @@ body {
 
 .sidebar {
   width: 180px;
-  background: #eee;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   padding: 20px 0;
-  margin: 10px;
+  /* margin: 10px; */
   gap: 10px;
+}
+
+.sidebar-separator {
+  width: 150px;
+  background-color: #edeef1;
 }
 
 .tab {
@@ -145,6 +150,8 @@ body {
   text-align: left;
   cursor: pointer;
   border-radius: 4px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .tab:hover {
@@ -348,4 +355,168 @@ a.tab {
 
 a.tab:hover {
   opacity: 0.9;               /* 선택적: 마우스오버 효과 */
+}
+
+/* === Alarm Toast 전용 확장 스타일 === */
+/* alarm.html 안의 <style>에 이미 핵심 레이아웃이 있지만,
+   전역으로 쓰고 싶다면 아래를 style.css로 옮겨 사용해도 됩니다. */
+
+/* 재사용 배지 변형 */
+.badge.chip {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  background: #FFF7E6;
+  color: #E39803;
+  border: 2px solid #E39803;
+}
+
+/* ===== Toast (알림 팝업) 레이아웃 ===== */
+.toast-container {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 9999;
+  pointer-events: none;
+  /* 컨테이너 자체는 클릭 안 받게 */
+}
+
+.toast {
+  width: min(520px, 92vw);
+  background: #fff;
+  border: 1px solid #E6E6EA;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  pointer-events: auto;
+  /* 개별 토스트는 클릭 가능 */
+  animation: toast-enter 260ms ease-out;
+}
+
+@keyframes toast-enter {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.toast-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 4px 16px;
+}
+
+.toast-logo {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.toast-brand {
+  font-size: 14px;
+  font-weight: 700;
+  color: #6B7280;
+  /* 회색 계열 */
+  letter-spacing: 0.2px;
+}
+
+.toast-spacer {
+  flex: 1;
+}
+
+.toast-icon-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  color: #9CA3AF;
+  cursor: pointer;
+}
+
+.toast-icon-btn:hover {
+  background: #F3F4F6;
+}
+
+.toast-body {
+  padding: 6px 16px 14px 16px;
+  cursor: pointer;
+}
+
+.toast-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.35;
+  margin: 10px 0 18px 0;
+  word-break: keep-all;
+}
+
+.toast-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toast-date {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+/* 재사용 가능한 배지 기본형 (프로젝트에 이미 비슷한 .badge가 있으면 그대로 써도 됨) */
+.badge.chip {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  background: #FFF7E6;
+  color: #E39803;
+  border: 2px solid #E39803;
+}
+
+/* 사라질 때 */
+.toast-leave {
+  animation: toast-leave 220ms ease-in forwards;
+}
+
+@keyframes toast-leave {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+}
+
+/* 데모용 버튼 */
+.demo-wrap {
+  padding: 24px;
+}
+
+.demo-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 700;
+  background: #111827;
+  color: #fff;
 }

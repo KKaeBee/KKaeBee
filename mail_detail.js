@@ -42,6 +42,7 @@ function renderMailDetail(data) {
   const departmentHtml = (data.department || []).map(dep => `<span class="tag">${dep}</span>`).join(" ");
 
   container.innerHTML = `
+  <section class="mail-list">
     <div class="section">
       <h3>관련 부서</h3>
       <div>${departmentHtml}</div>
@@ -54,5 +55,21 @@ function renderMailDetail(data) {
       <h3>체크리스트</h3>
       <ul>${checklistHtml}</ul>
     </div>
+    <div class="back-btn-container" style="margin-top: 20px;">
+      <button 
+        onclick="history.back()" 
+        style="
+          background-color: #f5f5f5;
+          border: none;
+          padding: 8px 14px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          color: #555555;
+        ">
+        ← 목록
+      </button>
+    </div>
+  </section>
   `;
 }
