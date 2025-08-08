@@ -59,13 +59,13 @@ function renderMailList() {
   `).join('');
 
 
-  list.addEventListener('click', (e) => {
+  mailList.addEventListener('click', (e) => {
     const btn = e.target.closest('.mail-link');
     if (!btn) return;
     goToDetail(btn.dataset.id);
   });
 
-  mailCount.textContent = `전체 ${mails.length}건`;
+  mailCount.textContent = `전체 ${allMails.length}건`;
 }
 
 function renderPagination() {
