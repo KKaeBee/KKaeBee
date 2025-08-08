@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.querySelector(".logout-btn");
   logoutBtn?.addEventListener("click", function () {
     localStorage.removeItem("deptName");
-    window.location.href = "../login/login.html"; // 로그인 페이지로 이동
+    window.location.href = "../FRONT/login/login.html"; // 로그인 페이지로 이동
   });
 
   // 바깥 영역 클릭 시 알림/부서 드롭다운 모두 닫기

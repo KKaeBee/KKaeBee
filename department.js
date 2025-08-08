@@ -24,6 +24,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderMailList();  
     renderPagination(); 
 
+    allMails = mails.sort((a, b) => new Date(b.date) - new Date(a.date)); // 최신순 정렬
+    currentPage = 1;
+
+    renderMailList();  
+    renderPagination(); 
   } catch (err) {
     console.error("부서 메일 불러오기 실패:", err);
   }
@@ -47,6 +52,7 @@ function renderMailList() {
   }
 
   mailList.innerHTML = pageMails.map(mail => `
+
     <li class="mail-item ${mail.is_read ? '' : 'unread'}" onclick="goToDetail(${mail.id})">
       <span class="badge ${mail.source.includes('금융위') ? 'orange' : 'yellow'}">${mail.source}</span>
       <a href="#" class="mail-title" onclick="event.preventDefault(); goToDetail(${mail.id})">
@@ -69,6 +75,13 @@ function renderPagination() {
 
   const totalPages = Math.ceil(allMails.length / mailsPerPage);
 
+  const pagesPerGroup = 5;
+
+  const currentGroup = Math.floor((currentPage - 1) / pagesPerGroup);
+  const startPage = currentGroup * pagesPerGroup + 1;
+  let endPage = startPage + pagesPerGroup - 1;
+  if (endPage > totalPages) endPage = totalPages;
+
   const prevBtn = document.createElement("button");
   prevBtn.innerHTML = "〈";
   prevBtn.disabled = currentPage === 1;
@@ -81,19 +94,6 @@ function renderPagination() {
   });
   pagination.appendChild(prevBtn);
 
-  let startPage = Math.max(1, currentPage - 2);
-  let endPage = Math.min(totalPages, currentPage + 2);
-
-  if (totalPages <= 5) {
-    startPage = 1;
-    endPage = totalPages;
-  } else if (endPage - startPage < 4) {
-    if (startPage === 1) {
-      endPage = Math.min(totalPages, startPage + 4);
-    } else if (endPage === totalPages) {
-      startPage = Math.max(1, endPage - 4);
-    }
-  }
 
   for (let i = startPage; i <= endPage; i++) {
     const btn = document.createElement("button");

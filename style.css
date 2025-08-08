@@ -184,6 +184,7 @@ body {
 }
 
 .mail-items {
+  min-height: 360px;
   list-style: none;
   padding: 0;
   margin: 0;
