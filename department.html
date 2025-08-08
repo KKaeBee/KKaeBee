@@ -65,8 +65,12 @@
   <script src="script.js"></script>
   <script src="department.js"></script>
   <script>
-    function goToDetail(id) { location.href = `mail_detail.html?id=${id}`; }
+    function goToDetail(id) {
+      localStorage.setItem("selectedMailId", String(id));
+      location.href = "mail_detail.html";
+    }
   </script>
+
 </body>
 
 </html>

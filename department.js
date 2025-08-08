@@ -49,9 +49,11 @@ function renderMailList() {
   mailList.innerHTML = pageMails.map(mail => `
     <li class="mail-item ${mail.is_read ? '' : 'unread'}" onclick="goToDetail(${mail.id})">
       <span class="badge ${mail.source.includes('금융위') ? 'orange' : 'yellow'}">${mail.source}</span>
-      <a href="mail_detail.html?id=${mail.id}" class="mail-title">${mail.title}</a>
+      <a href="#" class="mail-title" onclick="event.preventDefault(); goToDetail(${mail.id})">
+        ${mail.title}
+      </a>
       <span class="mail-date">${mail.date}</span>
-      <button class="mail-star ${mail.is_starred ? 'active' : ''}">
+      <button class="mail-star ${mail.is_starred ? 'active' : ''}" onclick="event.stopPropagation()">
         ${mail.is_starred ? '★' : '☆'}
       </button>
     </li>
