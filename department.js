@@ -135,7 +135,7 @@ function renderMailList() {
       ${mail.title}
     </a>
     <span class="mail-date">${mail.date}</span>
-    <button class="mail-star ${mail.is_starred ? 'active' : ''}" onclick="event.stopPropagation()">
+    <button class="mail-star ${mail.is_starred ? 'active' : ''}" data-id="${mail.id}">
       ${mail.is_starred ? '★' : '☆'}
     </button>
   </li>
