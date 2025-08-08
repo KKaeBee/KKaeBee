@@ -37,6 +37,8 @@
       <a href="important.html" class="tab">IMPORTANT</a>
     </aside>
 
+    <div class="sidebar-separator"></div>
+
     <!-- 메일 목록 -->
     <section class="mail-list">
       <h1>모든 메일함</h1>
@@ -51,10 +53,19 @@
       </div>
 
     </section>
+
+    <div class="sidebar-separator"></div>
   </main>
 
 </body>
 <script src="script.js"></script>
 <script src="all_mail.js"></script>
+<script>
+  function goToDetail(id) {
+    // location.href = `mail_detail.html#id=${id}`;
+    localStorage.setItem("selectedMailId", String(id));
+    location.href = "mail_detail.html";
+  }
+</script>
 
 </html>

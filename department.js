@@ -18,14 +18,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!res.ok) throw new Error("API 오류: " + res.status);
 
     const mails = await res.json();
-    console.log("부서 메일 목록:", mails);
+    allMails = mails.sort((a, b) => new Date(b.date) - new Date(a.date));
+    currentPage = 1;
+
+    renderMailList();  
+    renderPagination(); 
 
     allMails = mails.sort((a, b) => new Date(b.date) - new Date(a.date)); // 최신순 정렬
     currentPage = 1;
 
     renderMailList();  
     renderPagination(); 
-
   } catch (err) {
     console.error("부서 메일 불러오기 실패:", err);
   }
@@ -49,11 +52,14 @@ function renderMailList() {
   }
 
   mailList.innerHTML = pageMails.map(mail => `
-    <li class="mail-item ${mail.is_read ? '' : 'unread'}">
+
+    <li class="mail-item ${mail.is_read ? '' : 'unread'}" onclick="goToDetail(${mail.id})">
       <span class="badge ${mail.source.includes('금융위') ? 'orange' : 'yellow'}">${mail.source}</span>
-      <span class="mail-title">${mail.title}</span>
+      <a href="#" class="mail-title" onclick="event.preventDefault(); goToDetail(${mail.id})">
+        ${mail.title}
+      </a>
       <span class="mail-date">${mail.date}</span>
-      <button class="mail-star ${mail.is_starred ? 'active' : ''}">
+      <button class="mail-star ${mail.is_starred ? 'active' : ''}" onclick="event.stopPropagation()">
         ${mail.is_starred ? '★' : '☆'}
       </button>
     </li>
@@ -62,12 +68,13 @@ function renderMailList() {
   mailCount.textContent = `전체 ${allMails.length}건`;
 }
 
-
+// 페이지네이션
 function renderPagination() {
   const pagination = document.querySelector(".pagination");
   pagination.innerHTML = "";
 
   const totalPages = Math.ceil(allMails.length / mailsPerPage);
+
   const pagesPerGroup = 5;
 
   const currentGroup = Math.floor((currentPage - 1) / pagesPerGroup);
@@ -86,6 +93,7 @@ function renderPagination() {
     }
   });
   pagination.appendChild(prevBtn);
+
 
   for (let i = startPage; i <= endPage; i++) {
     const btn = document.createElement("button");

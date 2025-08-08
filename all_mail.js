@@ -1,4 +1,5 @@
 const API_BASE = "http://localhost:3000";
+
 const MAX_ID = 100;
 
 const mailsPerPage = 6;
@@ -20,7 +21,6 @@ async function fetchAllMails() {
       allMails.push(mail);
     }
 
-    // 🔹 최신 날짜 순 정렬
     allMails.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     renderMailList();
@@ -40,6 +40,7 @@ function renderMailList() {
     return;
   }
 
+
   const start = (currentPage - 1) * mailsPerPage;
   const end = start + mailsPerPage;
   const pageMails = allMails.slice(start, end);
@@ -47,15 +48,24 @@ function renderMailList() {
   mailList.innerHTML = pageMails.map(mail => `
     <li class="mail-item ${mail.is_read ? '' : 'unread'}">
       <span class="badge ${mail.source.includes('금융위') ? 'orange' : 'yellow'}">${mail.source}</span>
-      <span class="mail-title">${mail.title}</span>
+      <a href="#" class="mail-title" onclick="event.preventDefault(); goToDetail(${mail.id})">
+        ${mail.title}
+      </a>
       <span class="mail-date">${mail.date}</span>
-      <button class="mail-star ${mail.is_starred ? 'active' : ''}">
+      <button class="mail-star ${mail.is_starred ? 'active' : ''}" onclick="event.stopPropagation()">
         ${mail.is_starred ? '★' : '☆'}
       </button>
-    </li>
+      </li>
   `).join('');
 
-  mailCount.textContent = `전체 ${allMails.length}건`;
+
+  list.addEventListener('click', (e) => {
+    const btn = e.target.closest('.mail-link');
+    if (!btn) return;
+    goToDetail(btn.dataset.id);
+  });
+
+  mailCount.textContent = `전체 ${mails.length}건`;
 }
 
 function renderPagination() {

@@ -133,3 +133,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+// mail_detail로 이동하는 함수 (공통)
+function goToDetail(id) {
+  window.location.href = `mail_detail.html?id=${id}`;
+}
