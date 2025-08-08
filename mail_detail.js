@@ -65,7 +65,7 @@ function renderMailDetail(data) {
           border-radius: 6px;
           cursor: pointer;
           font-size: 14px;
-          color: #555555;
+          color: #555555;`
         ">
         ← 목록
       </button>
