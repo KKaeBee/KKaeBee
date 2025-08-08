@@ -30,6 +30,7 @@ loginForm.addEventListener("submit", async function (e) {
         sessionStorage.setItem("department_name", data.name);
          // 부서명 localStorage에 저장
         localStorage.setItem("deptName", name);
+        localStorage.setItem("dept_id", data.department_id);
 
         
         window.location.href = "../department.html";
