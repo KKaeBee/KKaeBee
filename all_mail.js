@@ -1,5 +1,5 @@
 const API_BASE = "http://localhost:3000";
-const MAX_ID = 54; 
+const MAX_ID = 54;
 
 async function fetchAllMails() {
   try {
@@ -16,7 +16,6 @@ async function fetchAllMails() {
       allMails.push(mail);
     }
 
-    // 🔹 최신 날짜 순 정렬
     allMails.sort((a, b) => new Date(b.date) - new Date(a.date));
     renderMailList(allMails);
 
@@ -36,14 +35,14 @@ function renderMailList(mails) {
   }
 
   mailList.innerHTML = mails.map(mail => `
-    <li class="mail-item ${mail.is_read ? '' : 'unread'}">
+    <li class="mail-item ${mail.is_read ? '' : 'unread'}" onclick="goToDetail(${mail.id})">
       <span class="badge ${mail.source.includes('금융위') ? 'orange' : 'yellow'}">${mail.source}</span>
-      <span class="mail-title">${mail.title}</span>
+      <a href="#" class="mail-title">${mail.title}</a>
       <span class="mail-date">${mail.date}</span>
       <button class="mail-star ${mail.is_starred ? 'active' : ''}">
         ${mail.is_starred ? '★' : '☆'}
       </button>
-    </li>
+      </li>
   `).join('');
 
   mailCount.textContent = `전체 ${mails.length}건`;
@@ -51,9 +50,8 @@ function renderMailList(mails) {
 
 document.addEventListener("DOMContentLoaded", fetchAllMails);
 
-// all mail 검색 api 호출
 async function fetchSearchResults(keyword) {
-  try { // 세션에서 로그인 정보 가져오기
+  try {
     const departmentId = sessionStorage.getItem("department_id");
     if (!departmentId) {
       alert("로그인이 필요합니다.");
@@ -62,7 +60,7 @@ async function fetchSearchResults(keyword) {
 
     const scope = 'all';
 
-    if (!keyword) { // 검색어가 비어 있으면 다시 전체 메일
+    if (!keyword) {
       fetchAllMails();
       return;
     }
@@ -84,7 +82,6 @@ async function fetchSearchResults(keyword) {
   }
 }
 
-// all mail 검색창 이벤트 리스너
 document.addEventListener("DOMContentLoaded", () => {
   fetchAllMails();
 
@@ -96,7 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchSearchResults(keyword);
   });
 
-  // Enter 키로도 검색 가능하게
   searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       const keyword = searchInput.value.trim();

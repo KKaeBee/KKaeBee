@@ -63,5 +63,12 @@
 </body>
 <script src="script.js"></script>
 <script src="all_mail.js"></script>
+<script>
+  function goToDetail(id) {
+    // location.href = `mail_detail.html#id=${id}`;
+    localStorage.setItem("selectedMailId", String(id));
+    location.href = "mail_detail.html";
+  }
+</script>
 
 </html>

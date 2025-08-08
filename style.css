@@ -201,6 +201,19 @@ body {
   margin-left: 5px;
 }
 
+.mail-title {
+  flex: 1;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none; /* 밑줄 제거 */
+  color: inherit;        /* 기존 글자색 유지 */
+}
+.mail-title:hover {
+  opacity: 0.85;         /* 선택: hover 시 살짝 강조 */
+}
+
 .badge {
   padding: 5px 12px;
   border-radius: 999px;
