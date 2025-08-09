@@ -123,8 +123,10 @@ body {
 
 .container {
   display: flex;
-  background: #eee;
-  height: calc(100vh - 60px);
+  background: transparent;
+  min-height: calc(100vh - 60px);
+  height: auto;
+  align-items: stretch;
 }
 
 .sidebar {
@@ -135,11 +137,14 @@ body {
   padding: 20px 0;
   /* margin: 10px; */
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .sidebar-separator {
   width: 150px;
   background-color: #edeef1;
+  min-height: 100%;
+  flex-shrink: 0;
 }
 
 .tab {
@@ -275,6 +280,10 @@ body {
   color: #999;
   width: 80px;
   text-align: right;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  margin-top: 16px;
 }
 
 .mail-star {
@@ -359,8 +368,6 @@ a.tab:hover {
 }
 
 /* === Alarm Toast 전용 확장 스타일 === */
-/* alarm.html 안의 <style>에 이미 핵심 레이아웃이 있지만,
-   전역으로 쓰고 싶다면 아래를 style.css로 옮겨 사용해도 됩니다. */
 
 /* 재사용 배지 변형 */
 .badge.chip {
@@ -369,9 +376,9 @@ a.tab:hover {
   border-radius: 999px;
   font-size: 14px;
   font-weight: 700;
-  background: #FFF7E6;
-  color: #E39803;
-  border: 2px solid #E39803;
+  background: #ffffff;
+  color: #222222;
+  border: 2px solid #D9D8D4;
 }
 
 /* ===== Toast (알림 팝업) 레이아웃 ===== */
@@ -484,10 +491,10 @@ a.tab:hover {
   padding: 8px 14px;
   border-radius: 999px;
   font-size: 14px;
-  font-weight: 700;
-  background: #FFF7E6;
-  color: #E39803;
-  border: 2px solid #E39803;
+  font-weight: 400;
+  background: #fff;
+  color: #222222;
+  border: 2px solid #D9D8D4;
 }
 
 /* 사라질 때 */
@@ -541,7 +548,7 @@ a.tab:hover {
 }
 
 .mail-summary ol {
-  margin-left: 20px;
+  margin-left: 7px;
 }
 
 .mail-summary ul {
@@ -570,4 +577,68 @@ a.tab:hover {
   background-color: #e0e0e0;
   border: none;
   cursor: pointer;
+}
+
+/* ===== Mail Detail 보완 ===== */
+.detail-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.detail-title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+}
+
+.detail-card {
+  background: #f7f7fb;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 10px 0 14px;
+}
+
+.detail-card h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.origin-link {
+  display: inline-block;
+  word-break: break-all;
+}
+
+.back-btn {
+  padding: 8px 14px;
+  background: #e9e9ee;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.back-btn:hover { opacity: .9; }
+
+.red-dot {
+  width: 8px;
+  height: 8px;
+  background: #e74c3c;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
 }
