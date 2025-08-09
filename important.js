@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     await fetchImportantMails(deptId);
-    
+
     // 검색 이벤트
     if (searchBtn && searchInput) {
         searchBtn.addEventListener("click", () => {
@@ -59,10 +59,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function fetchImportantMails(deptId) {
     try {
-        const res = await fetch(`${API_BASE}/api/notices?department_id=${deptId}`, {
-            headers: { Accept: "application/json" }
+        const res = await fetch(`${API_BASE}/api/notices/all?department_id=${deptId}`, {
+            headers: { Accept: "application/json" },
         });
-
         if (!res.ok) throw new Error("API 오류");
 
         const data = await res.json();
@@ -107,6 +106,7 @@ async function fetchImportantSearchResults(deptId, keyword) {
 function renderMailList() {
     const mailList = document.getElementById("important-list");
     const mailCount = document.querySelector(".mail-count");
+    const pagination = document.querySelector(".pagination");
 
     if (!mailList || !mailCount) return;
 
@@ -117,6 +117,7 @@ function renderMailList() {
     if (!pageMails.length) {
         mailList.innerHTML = `<li class="no-mail">중요 메일이 없습니다.</li>`;
         mailCount.textContent = `전체 0건`;
+        if (pagination) pagination.style.display = "none";
         return;
     }
 
@@ -124,7 +125,6 @@ function renderMailList() {
         <li class="mail-item ${mail.is_read ? '' : 'unread'}"
             data-mail-id="${mail.id}"
             data-is-read="${mail.is_read}">
-            ${mail.is_read ? '' : '<span class="red-dot"></span>'}
             <span class="badge ${mail.source.includes('금융위') ? 'orange' : 'yellow'}">${mail.source}</span>
         <a href="mail_detail.html?id=${mail.id}" class="mail-title" data-goto="${mail.id}">
             ${mail.title}
@@ -137,6 +137,7 @@ function renderMailList() {
     `).join('');
 
     mailCount.textContent = `전체 ${allMails.length}건`;
+    if (pagination) pagination.style.display = "";
 }
 
 function renderPagination() {
