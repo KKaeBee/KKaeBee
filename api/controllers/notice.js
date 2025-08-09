@@ -269,7 +269,7 @@ exports.getNoticeJson = (req, res) => {
             if (err) return res.status(500).json({ error: "JSON file not found" });
 
             try {
-                const parsed = JSON.parse(data); 
+                const parsed = JSON.parse(data);
 
                 if (!Array.isArray(parsed)) {
                     return res.status(500).json({ error: "Invalid JSON format (expected array)" });
@@ -292,5 +292,41 @@ exports.getNoticeJson = (req, res) => {
                 return res.status(500).json({ error: "Failed to parse JSON" });
             }
         });
+    });
+};
+
+// 전체 메일 목록 조회
+// GET /api/notices/all?department_id=10
+exports.getAllNoticesWithStatus = (req, res) => {
+    const departmentId = Number(req.query.department_id);
+    if (!departmentId) {
+        return res.status(400).json({ error: "department_id is required" });
+    }
+
+    const sql = `
+    SELECT
+        n.id, n.title, n.date, n.source, n.type, n.url,
+        -- 부서 상태(없으면 0/NULL 처리)
+        COALESCE(ns.is_read, 0)   AS is_read,
+        COALESCE(ns.is_starred, 0) AS is_starred,
+        ns.assigned_to
+    FROM notice n
+    LEFT JOIN notice_status ns
+        ON ns.notice_id = n.id
+        AND ns.department_id = ?
+        ORDER BY n.date DESC;
+    `;
+
+    db.all(sql, [departmentId], (err, rows) => {
+        if (err) return res.status(500).json({ error: "Server error" });
+
+        const formatted = rows.map(r => ({
+            ...r,
+            is_read: !!r.is_read,
+            is_starred: !!r.is_starred,
+            assigned_to: r.assigned_to ?? null
+        }));
+
+        return res.status(200).json(formatted);
     });
 };

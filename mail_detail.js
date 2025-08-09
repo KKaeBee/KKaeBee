@@ -2,7 +2,7 @@ const API_BASE = "http://localhost:3000";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-    // 1차: 쿼리스트링
+  // 1차: 쿼리스트링
   let id = new URL(location.href).searchParams.get("id");
 
   // 2차: 리스트에서 저장해 둔 백업값
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const ref = new URL(document.referrer);
       id = ref.searchParams.get("id");
-    } catch (_) {}
+    } catch (_) { }
   }
 
   // 디버그 (원인이 계속되면 콘솔 스샷만 보내줘)
@@ -43,6 +43,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
     if (!baseRes.ok) throw new Error("기본 정보 API 실패");
     const base = await baseRes.json(); // { id,title,date,source,url,... }
+
+    // 즐겨찾기 정보
+    try {
+      const starred = await fetchStarFromAll(id);
+      if (starred !== null) base.is_starred = starred;
+    } catch (e) {
+      console.warn("즐겨찾기 상태 API 실패", e);
+    }
 
     // (2) 메일 상세정보
     const detailRes = await fetch(`${API_BASE}/api/notices/${encodeURIComponent(id)}/json`, {
@@ -118,4 +126,23 @@ function render({ base, detail }) {
       <button class="back-btn" onclick="history.back()">← 목록</button>
     </div>
   `;
+}
+
+// 별표 조회 기능
+function getDeptId() {
+  return sessionStorage.getItem("department_id");
+}
+
+async function fetchStarFromAll(noticeId) {
+  const deptId = getDeptId();
+  if (!deptId) return null;
+
+  const res = await fetch(`${API_BASE}/api/notices/all?department_id=${deptId}`, {
+    headers: { Accept: "application/json" }
+  });
+  if (!res.ok) throw new Error("all API 실패");
+
+  const rows = await res.json();
+  const found = rows.find(r => String(r.id) === String(noticeId));
+  return found ? !!found.is_starred : null;
 }

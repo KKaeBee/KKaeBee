@@ -129,7 +129,6 @@ function renderMailList() {
   <li class="mail-item ${mail.is_read ? '' : 'unread'}"
       data-mail-id="${mail.id}"
       data-is-read="${mail.is_read}">
-    ${mail.is_read ? '' : '<span class="red-dot"></span>'}
     <span class="badge ${mail.source.includes('금융위') ? 'orange' : 'yellow'}">${mail.source}</span>
   <a href="mail_detail.html?id=${mail.id}" class="mail-title" data-goto="${mail.id}">
       ${mail.title}

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getNoticesByDepartment, toggleStar, markAsRead, getNoticeById, getSortedNotices, searchNotices, getNoticeJson} = require("../controllers/notice");
+const { getNoticesByDepartment, toggleStar, markAsRead, getNoticeById, getSortedNotices, searchNotices, getNoticeJson, getAllNoticesWithStatus} = require("../controllers/notice");
 
 // 제목 기준 검색
 // GET /api/notices/search?department_id=10&keyword=보험업감독업무&scope=inbox
@@ -9,6 +9,10 @@ router.get("/search", searchNotices);
 // 메일 정렬 (즐겨찾기/안읽은메일/최신순/담당자있음)
 // GET /api/notices/sort?department_id=10&sort=starred
 router.get('/sort', getSortedNotices);
+
+// 전체 메일 목록 조회
+// GET /api/notices/all?department_id=10
+router.get("/all", getAllNoticesWithStatus);
 
 // 즐겨찾기(IMPORTANT) 토글
 // POST /api/notices/:id/star
