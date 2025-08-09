@@ -47,6 +47,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         window.location.href = link.href;
     });
+
+    // 제목 클릭 시 id를 백업 저장 (상세에서 ?id 없을 때 대비)
+    document.addEventListener("click", (e) => {
+        const a = e.target.closest("a.mail-title");
+        if (a && a.dataset.goto) {
+            sessionStorage.setItem("last_notice_id", a.dataset.goto);
+        }
+    });
 });
 
 async function fetchImportantMails(deptId) {

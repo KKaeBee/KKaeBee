@@ -11,12 +11,13 @@ async function fetchAllMails() {
     allMails = [];
 
     for (let id = 1; id <= MAX_ID; id++) {
-      const res = await fetch(`${API_BASE}/api/notices/${id}`);
+      const res = await fetch(`${API_BASE}/api/notices/${id}`, {
+        headers: { Accept: "application/json" },
+      });
       if (!res.ok) {
         console.warn(`ID ${id} 없음 → 중단`);
         break;
       }
-
       const mail = await res.json();
       allMails.push(mail);
     }
@@ -31,8 +32,8 @@ async function fetchAllMails() {
 }
 
 function renderMailList() {
-  const mailList = document.querySelector('.mail-items');
-  const mailCount = document.querySelector('.mail-count');
+  const mailList = document.querySelector(".mail-items");
+  const mailCount = document.querySelector(".mail-count");
 
   if (!allMails.length) {
     mailList.innerHTML = `<li class="no-mail">메일이 없습니다.</li>`;
@@ -40,30 +41,27 @@ function renderMailList() {
     return;
   }
 
-
   const start = (currentPage - 1) * mailsPerPage;
   const end = start + mailsPerPage;
   const pageMails = allMails.slice(start, end);
 
-  mailList.innerHTML = pageMails.map(mail => `
-    <li class="mail-item ${mail.is_read ? '' : 'unread'}">
-      <span class="badge ${mail.source.includes('금융위') ? 'orange' : 'yellow'}">${mail.source}</span>
-      <a href="#" class="mail-title" onclick="event.preventDefault(); goToDetail(${mail.id})">
+  mailList.innerHTML = pageMails
+    .map(
+      (mail) => `
+    <li class="mail-item ${mail.is_read ? "" : "unread"}" data-mail-id="${mail.id}">
+      ${mail.is_read ? "" : '<span class="red-dot"></span>'}
+      <span class="badge ${mail.source.includes("금융위") ? "orange" : "yellow"}">${mail.source}</span>
+      <a href="mail_detail.html?id=${mail.id}" class="mail-title" data-goto="${mail.id}">
         ${mail.title}
       </a>
       <span class="mail-date">${mail.date}</span>
-      <button class="mail-star ${mail.is_starred ? 'active' : ''}" data-id="${mail.id}">
-        ${mail.is_starred ? '★' : '☆'}
+      <button class="mail-star ${mail.is_starred ? "active" : ""}" data-id="${mail.id}">
+        ${mail.is_starred ? "★" : "☆"}
       </button>
-      </li>
-  `).join('');
-
-
-  mailList.addEventListener('click', (e) => {
-    const btn = e.target.closest('.mail-link');
-    if (!btn) return;
-    goToDetail(btn.dataset.id);
-  });
+    </li>
+  `
+    )
+    .join("");
 
   mailCount.textContent = `전체 ${allMails.length}건`;
 }
@@ -125,26 +123,27 @@ async function fetchSearchResults(keyword) {
       return;
     }
 
-    const scope = 'all';
+    const scope = "all";
 
     if (!keyword) {
       fetchAllMails();
       return;
     }
 
-    const res = await fetch(`${API_BASE}/api/notices/search?department_id=${departmentId}&keyword=${encodeURIComponent(keyword)}&scope=${scope}`, {
-      headers: {
-        Accept: "application/json"
-      }
-    });
+    const res = await fetch(
+      `${API_BASE}/api/notices/search?department_id=${departmentId}&keyword=${encodeURIComponent(
+        keyword
+      )}&scope=${scope}`,
+      { headers: { Accept: "application/json" } }
+    );
 
     if (!res.ok) throw new Error("검색 실패");
 
     allMails = await res.json();
+    allMails.sort((a, b) => new Date(b.date) - new Date(a.date));
     currentPage = 1;
     renderMailList();
     renderPagination();
-
   } catch (err) {
     console.error("검색 실패:", err);
     alert("검색 중 오류가 발생했습니다.");
@@ -154,18 +153,26 @@ async function fetchSearchResults(keyword) {
 document.addEventListener("DOMContentLoaded", () => {
   fetchAllMails();
 
-  const searchBtn = document.querySelector('.search-btn');
-  const searchInput = document.querySelector('.search-bar');
+  const searchBtn = document.querySelector(".search-btn");
+  const searchInput = document.querySelector(".search-bar");
 
-  searchBtn.addEventListener('click', () => {
+  searchBtn?.addEventListener("click", () => {
     const keyword = searchInput.value.trim();
     fetchSearchResults(keyword);
   });
 
-  searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+  searchInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
       const keyword = searchInput.value.trim();
       fetchSearchResults(keyword);
+    }
+  });
+
+  // 제목 클릭 시 id를 백업 저장 (상세에서 ?id 없을 때 대비)
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a.mail-title");
+    if (a && a.dataset.goto) {
+      sessionStorage.setItem("last_notice_id", a.dataset.goto);
     }
   });
 });

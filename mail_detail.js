@@ -1,9 +1,35 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const params = new URLSearchParams(location.search);
-  // const id = params.get("id");
-  const id = localStorage.getItem("selectedMailId");
+const API_BASE = "http://localhost:3000";
 
-  // id가 없으면 바로 종료
+document.addEventListener("DOMContentLoaded", async () => {
+
+    // 1차: 쿼리스트링
+  let id = new URL(location.href).searchParams.get("id");
+
+  // 2차: 리스트에서 저장해 둔 백업값
+  if (!id) {
+    id = sessionStorage.getItem("last_notice_id") || null;
+  }
+
+  // 3차: 리퍼러에 남아있다면 거기서라도
+  if (!id && document.referrer) {
+    try {
+      const ref = new URL(document.referrer);
+      id = ref.searchParams.get("id");
+    } catch (_) {}
+  }
+
+  // 디버그 (원인이 계속되면 콘솔 스샷만 보내줘)
+  console.log("[mail_detail] href:", location.href, "id:", id);
+
+  if (!id) {
+    document.getElementById("mail-detail").innerHTML =
+      "<p>잘못된 접근입니다. 목록에서 다시 선택해 주세요.</p>";
+    return;
+  }
+
+  const params = new URLSearchParams(location.search);
+  // const id = params.get("id"); // URL 파라미터에서만 읽기
+
   if (!id) {
     document.getElementById("mail-detail").innerHTML =
       "<p>잘못된 접근입니다. 목록에서 다시 선택해 주세요.</p>";
@@ -11,65 +37,85 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const res = await fetch(`http://localhost:3000/api/notices/${encodeURIComponent(id)}/json`, {
-      headers: { "Accept": "application/json" }
+    // (1) 메일 기본정보
+    const baseRes = await fetch(`${API_BASE}/api/notices/${encodeURIComponent(id)}`, {
+      headers: { Accept: "application/json" }
     });
+    if (!baseRes.ok) throw new Error("기본 정보 API 실패");
+    const base = await baseRes.json(); // { id,title,date,source,url,... }
 
-    if (!res.ok) throw new Error("API 응답 실패");
+    // (2) 메일 상세정보
+    const detailRes = await fetch(`${API_BASE}/api/notices/${encodeURIComponent(id)}/json`, {
+      headers: { Accept: "application/json" }
+    });
+    if (!detailRes.ok) throw new Error("상세 정보 API 실패");
+    const detail = await detailRes.json(); // { department, summary, checklist }
 
-    const data = await res.json();
-    renderMailDetail(data);
-
-  } catch (err) {
-    console.error("오류 발생:", err);
+    render({ base, detail });
+  } catch (e) {
+    console.error(e);
     document.getElementById("mail-detail").innerHTML =
       "<p>메일 상세 정보를 불러오는 데 실패했습니다.</p>";
   }
 });
 
-function renderMailDetail(data) {
+function render({ base, detail }) {
   const container = document.getElementById("mail-detail");
 
-  const summaryHtml = Object.entries(data.summary || {}).map(
-    ([section, items]) => `
-    <li>
-      <strong>${section}</strong>
-      <ul>${items.map(i => `<li>${i}</li>`).join("")}</ul>
-    </li>`
-  ).join("");
+  const departmentHtml = (detail.department || [])
+    .map(dep => `<span class="badge chip">${dep}</span>`)
+    .join(" ");
 
-  const checklistHtml = (data.checklist || []).map(item => `<li>${item}</li>`).join("");
-  const departmentHtml = (data.department || []).map(dep => `<span class="tag">${dep}</span>`).join(" ");
+  const summaryHtml = Object.entries(detail.summary || {})
+    .map(([title, items]) => `
+      <ol>
+        <strong>${title}</strong>
+        <ul>${(items || []).map(v => `<li>${v}</li>`).join("")}</ul>
+      </ol>
+    `).join("");
+
+  const checklistHtml = (detail.checklist || [])
+    .map(v => `<li>${v}</li>`)
+    .join("");
 
   container.innerHTML = `
-  <section class="mail-list">
-    <div class="section">
-      <h3>관련 부서</h3>
-      <div>${departmentHtml}</div>
+    <div class="detail-header">
+      <span class="badge ${String(base.source).includes('금융위') ? 'orange' : 'yellow'}">
+        ${base.source ?? ""}
+      </span>
+      <h1 class="detail-title">${base.title ?? ""}</h1>
+      <div class="detail-meta">
+        <span class="mail-date">${base.date ?? ""}</span>
+        <button class="mail-star ${base.is_starred ? "active" : ""}" data-id="${base.id}">
+          ${base.is_starred ? "★" : "☆"}
+        </button>
+      </div>
     </div>
-    <div class="section">
+
+    <section class="detail-card">
+      <h3>관련부서</h3>
+      <div class="chips">${departmentHtml || "-"}</div>
+    </section>
+
+    <section class="detail-card">
       <h3>요약</h3>
-      <ul>${summaryHtml}</ul>
-    </div>
-    <div class="section">
+      <span class="mail-summary">${summaryHtml || "<li>요약이 없습니다.</li>"}</span>
+    </section>
+
+    <section class="detail-card">
       <h3>체크리스트</h3>
-      <ul>${checklistHtml}</ul>
+      <ul class="checklist">${checklistHtml || "<li>체크리스트가 없습니다.</li>"}</ul>
+    </section>
+
+    <section class="detail-card">
+      <h3>URL</h3>
+      <a class="origin-link" href="${base.url || '#'}" target="_blank" rel="noopener">
+        ${base.url || "-"}
+      </a>
+    </section>
+
+    <div class="back-btn-wrap">
+      <button class="back-btn" onclick="history.back()">← 목록</button>
     </div>
-    <div class="back-btn-container" style="margin-top: 20px;">
-      <button 
-        onclick="history.back()" 
-        style="
-          background-color: #f5f5f5;
-          border: none;
-          padding: 8px 14px;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          color: #555555;
-        ">
-        ← 목록
-      </button>
-    </div>
-  </section>
   `;
 }
