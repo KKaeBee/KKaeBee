@@ -19,6 +19,7 @@ body {
   height: 24px;
   margin-left: 20px;
   margin-right: 110px;
+  cursor: pointer;
 }
 
 .search-bar {
@@ -59,6 +60,12 @@ body {
 .alarm-icon {
   width: 30px;
   height: 30px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.alarm-icon:hover {
+  background: #f3f4f6;
 }
 
 .dept-name {
@@ -74,12 +81,14 @@ body {
 .dept-name-toggle {
   display: flex;
   align-items: center;
-  background: none;
+  background: transparent;
   border: none;
   font-size: 14px;
   color: #666;
   cursor: pointer;
   gap: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
 }
 
 .dept-name-toggle .arrow {
@@ -91,16 +100,23 @@ body {
 .dept-menu {
   display: none;
   position: absolute;
-  top: 100%;
+  top: 40px;
   right: 0;
   margin-top: 6px;
   background: white;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border: 1px solid #ccc;
   border-radius: 8px;
   padding: 6px 0;
   z-index: 100;
   min-width: 100px;
 }
+
+.dept-menu.show {
+  display: block;
+}
+
+.dept-name-toggle:hover { background: #f3f4f6; }
 
 .logout-btn {
   width: 100%;
@@ -114,11 +130,7 @@ body {
 }
 
 .logout-btn:hover {
-  background-color: #f0f0f0;
-}
-
-.dept-menu.show {
-  display: block;
+  background-color: #f7f7fb;
 }
 
 .container {
@@ -356,6 +368,8 @@ body {
 .alarm-dropdown span {
   color: #777;
 }
+
+.alarm-dropdown li:hover { background: #f3f4f6; }
 
 a.tab {
   text-decoration: none;      /* 밑줄 제거 */

@@ -6,10 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const alarmDropdown = document.createElement("div");
   alarmDropdown.className = "alarm-dropdown";
   alarmDropdown.innerHTML = `
-    <ul>
-      <li><strong>금융감독원 최근 제개정 정보</strong><br><span>금융지주회사감독규정시행세칙 개정안...</span></li>
-      <li><strong>금융위원회</strong><br><span>금융지주회사감독규정시행세칙 개정안...</span></li>
-      <li><strong>금융감독원 세칙 제개정 예고</strong><br><span>금융지주회사감독규정시행세칙 개정안...</span></li>
+    <ul class="alarm-list">
+      <li class="loading">불러오는 중...</li>
     </ul>
   `;
   alarmDropdown.style.display = "none";
