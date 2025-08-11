@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>테스트 알림</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="demo-wrap">
+    <!-- 데모: ?id=10 없이도 버튼으로 테스트 가능 -->
+    <button class="demo-btn" id="demoBtn">테스트 알림 띄우기</button>
+  </div>
+
+  <!-- 알림이 쌓이는 영역 -->
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="alarm.js" defer></script>
+</body>
+
+</html>

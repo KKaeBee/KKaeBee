@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>중요 메일함</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- GNB -->
+  <header class="gnb">
+    <img src="logo/gnb_Logo.png" alt="로고" class="gnb-logo">
+    <input type="text" class="search-bar" placeholder="확인하고 싶은 규정 정보를 검색해보세요">
+    <button class="search-btn"></button>
+    <div class="gnb-right">
+      <div class="alarm-container">
+        <img src="icon/ic_alarm_new_48.png" alt="알림" class="alarm-icon">
+      </div>
+      <div class="dept-dropdown">
+        <button class="dept-name-toggle">
+          <span class="dept-name">ID</span> <!-- 부서명 자동 변경됨-->
+          <span class="arrow">▼</span>
+        </button>
+        <div class="dept-menu">
+          <button class="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 좌측 메뉴 -->
+    <aside class="sidebar">
+      <a href="department.html" class="tab">DEPARTMENT</a>
+      <a href="all_mail.html" class="tab">ALL MAIL</a>
+      <a href="important.html" class="tab orange">IMPORTANT</a>
+    </aside>
+
+    <div class="sidebar-separator"></div>
+
+    <!-- 중요 메일 리스트 -->
+    <section class="mail-list">
+      <h1>중요 메일함</h1>
+      <p class="mail-count">전체 00건</p>
+
+      <ul class="mail-items" id="important-list">
+        <!-- JS로 삽입됨 -->
+      </ul>
+
+      <div class="pagination">
+        <button>〈</button>
+        <button class="active">1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>4</button>
+        <button>5</button>
+        <button>〉</button>
+      </div>
+    </section>
+
+    <div class="sidebar-separator"></div>
+  </main>
+
+  <script src="script.js"></script>
+  <script src="gnb.js"></script>
+  <script src="important.js"></script>
+  <script>
+    function goToDetail(id) { location.href = `mail_detail.html?id=${id}`; }
+  </script>
+</body>
+
+</html>
