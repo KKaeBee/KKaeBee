@@ -159,6 +159,16 @@ body {
   flex-shrink: 0;
 }
 
+hr {
+  border: none;
+  height: 1px;
+  background-color: #ccc;
+  margin-block-start: 2px;
+  margin-block-end: 2px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .tab {
   background: #ddd;
   border: none;
