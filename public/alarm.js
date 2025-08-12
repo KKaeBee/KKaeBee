@@ -1,13 +1,6 @@
-// alarm.js
-// - 단건 알림: showAlarm(id)  → /api/notices/:id
-// - 최신 N개 알림: showLatestToasts(limit, intervalMs)
-//   * /api/notices?department_id=... 로 받아 프론트에서 날짜 내림차순 정렬 후 상위 N개 표시
-// - 쿼리스트링: ?id=10  또는  ?top=7
-
 (function () {
   const API_ROOT = "http://localhost:3000";
   const NOTICE_API = `${API_ROOT}/api/notices`;
-
   const qs = (sel, el = document) => el.querySelector(sel);
 
   // ====== container 보장 ======
@@ -51,11 +44,8 @@
     return res.json();
   }
 
-  // 부서 메일 목록 → 날짜 내림차순 정렬
   async function fetchLatestByDepartment(limit = 7) {
-    // 세션에 저장된 부서 ID 사용 (없으면 10 같은 기본값 사용)
     const departmentId = sessionStorage.getItem("department_id") || "10";
-
     const res = await fetch(
       `${NOTICE_API}?department_id=${encodeURIComponent(departmentId)}`,
       { headers: { Accept: "application/json" } }
@@ -64,18 +54,63 @@
 
     const list = await res.json();
     if (!Array.isArray(list)) return [];
-
-    // date 기준 내림차순
-    const sorted = list
-      .slice()
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    const sorted = list.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     return sorted.slice(0, Number(limit) || 7);
   }
 
-  // ====== UI ======
+  // ====== 빈 목록 모달 ======
+  function showEmptyModal() {
+    // overlay
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    // 최소한의 스타일만 지정 (나머지는 style.css에서 원하는 대로 커스텀)
+    Object.assign(overlay.style, {
+      position: "fixed",
+      inset: "0",
+      background: "rgba(0,0,0,.6)",
+      display: "grid",
+      placeItems: "center",
+      zIndex: "9999",
+    });
+
+    // modal
+    const modal = document.createElement("div");
+    modal.className = "modal-card";
+    Object.assign(modal.style, {
+      background: "#fff",
+      borderRadius: "16px",
+      padding: "24px 28px",
+      width: "min(440px, 90vw)",
+      textAlign: "center",
+    });
+
+    const msg = document.createElement("p");
+    msg.className = "modal-message";
+    msg.textContent = "사원님의 부서에서 받으실 메일 알림이 없습니다.";
+
+    const btn = document.createElement("button");
+    btn.className = "modal-confirm";
+    btn.textContent = "확인";
+    Object.assign(btn.style, {
+      width: "100%", height: "44px",
+      border: "0", borderRadius: "10px",
+      cursor: "pointer", color: "#fff", background: "#222"
+    });
+
+    // 이벤트: 배경 클릭 → alarm.html / 모달 내부 클릭은 전파 막기 / 확인 → all_mail.html
+    overlay.addEventListener("click", () => { location.href = "alarm.html"; });
+    modal.addEventListener("click", (e) => e.stopPropagation());
+    btn.addEventListener("click", () => { location.href = "all_mail.html"; });
+
+    modal.appendChild(msg);
+    modal.appendChild(btn);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+  }
+
+  // ====== UI (토스트) ======
   function createToast(notice) {
     const { id, title, date, source } = notice || {};
-
     const toast = document.createElement("section");
     toast.className = "toast";
     toast.setAttribute("role", "alert");
@@ -91,51 +126,34 @@
       <div class="toast-body">
         <h3 class="toast-title">${escapeHTML(title || "제목 없음")}</h3>
         <div class="toast-footer">
-          <span class="badge ${source.includes("금융위") ? "orange" : "yellow"}">${source}</span>
+          <span class="badge ${source?.includes("금융위") ? "orange" : "yellow"}">${source ?? ""}</span>
           <time class="toast-date">${escapeHTML(formatISODate(date))}</time>
         </div>
       </div>
     `;
 
-    // 닫기 버튼
     qs(".toast-close", toast).addEventListener("click", (e) => {
       e.stopPropagation();
       dismissToast(toast);
     });
 
-    // 본문 클릭 → mail_detail로 이동 (해당 id)
     qs(".toast-body", toast).addEventListener("click", () => {
-      // 1) id 백업 저장 (상세에서 쿼리스트링이 유실되는 드문 케이스 대비)
       if (id != null) {
-        try { sessionStorage.setItem("last_notice_id", String(id)); } catch (_) {}
+        try { sessionStorage.setItem("last_notice_id", String(id)); } catch {}
       }
-      // 출발지 기록: alarm
-      try { sessionStorage.setItem("last_list", "alarm"); } catch (_) {}
-      // 2) 어떤 경로에서든 mail_detail.html을 정확히 가리키도록 URL 생성
+      try { sessionStorage.setItem("last_list", "alarm"); } catch {}
       const target = new URL("./mail_detail.html", location.href);
       if (id != null) target.searchParams.set("id", String(id));
       location.href = target.href;
       dismissToast(toast);
     });
 
-    // 자동 닫힘(호버 시 일시정지)
-    let remaining = 8000;
-    let timerId = null;
-    let startedAt = null;
-    const startTimer = () => {
-      startedAt = Date.now();
-      timerId = setTimeout(() => dismissToast(toast), remaining);
-    };
-    const pauseTimer = () => {
-      if (!timerId) return;
-      clearTimeout(timerId);
-      timerId = null;
-      remaining -= Date.now() - startedAt;
-    };
+    // 자동 닫힘
+    let remaining = 8000, timerId = null, startedAt = null;
+    const startTimer = () => { startedAt = Date.now(); timerId = setTimeout(() => dismissToast(toast), remaining); };
+    const pauseTimer = () => { if (!timerId) return; clearTimeout(timerId); timerId = null; remaining -= Date.now() - startedAt; };
     toast.addEventListener("mouseenter", pauseTimer);
-    toast.addEventListener("mouseleave", () => {
-      if (!timerId) startTimer();
-    });
+    toast.addEventListener("mouseleave", () => { if (!timerId) startTimer(); });
 
     toastContainer.prepend(toast);
     startTimer();
@@ -148,7 +166,6 @@
   }
 
   // ====== Public API ======
-  // 단건 알림 (직접 id 지정)
   window.showAlarm = async function (noticeId) {
     try {
       const data = await fetchNotice(noticeId);
@@ -162,10 +179,13 @@
     }
   };
 
-  // 최신 N개 알림 (부서함 기준)
   window.showLatestToasts = async function (limit = 7, intervalMs = 400) {
     try {
       const list = await fetchLatestByDepartment(limit);
+      if (!list.length) {
+        showEmptyModal(); // << 비어 있으면 모달
+        return;
+      }
       list.forEach((notice, idx) => {
         setTimeout(() => createToast(notice), idx * intervalMs);
       });
@@ -178,7 +198,7 @@
     }
   };
 
-  // ====== Auto bootstrap (쿼리스트링 + 데모 버튼) ======
+  // ====== Auto bootstrap ======
   document.addEventListener("DOMContentLoaded", () => {
     const p = new URL(location.href).searchParams;
     const id = p.get("id");
@@ -191,7 +211,7 @@
     if (btn) btn.addEventListener("click", () => window.showLatestToasts(7, 400));
   });
 
-  // 뒤로가기 버튼 함수
+  // 뒤로가기 버튼
   window.goBackToAllMail = function () {
     window.location.href = "all_mail.html";
   };
