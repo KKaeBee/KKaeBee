@@ -6,7 +6,7 @@
     "sqlite3": "^5.1.7"
   },
   "name": "kkaebee",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Desktop application that delivers real-time financial regulation alerts via the internal mail system.",
   "main": "main.js",
   "devDependencies": {
