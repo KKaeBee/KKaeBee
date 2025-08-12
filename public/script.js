@@ -1,10 +1,3 @@
-// 최초 실행 시 기존 알림 아이콘 alarm_seen_ 데이터 삭제
-Object.keys(localStorage).forEach(key => {
-    if (key.startsWith('alarm_seen_')) {
-        localStorage.removeItem(key);
-    }
-});
-
 function getCurrentDeptId() {
   return sessionStorage.getItem("department_id") || localStorage.getItem("dept_id");
 }
@@ -68,8 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // 로그아웃 버튼 클릭 시 localStorage 초기화 및 로그인 페이지 이동
   const logoutBtn = document.querySelector(".logout-btn");
   logoutBtn?.addEventListener("click", function () {
-    localStorage.removeItem("deptName");
-    window.location.href = "./index.html"; // 로그인 페이지로 이동
+  localStorage.removeItem("deptName");
+  localStorage.removeItem("dept_id");
+  window.location.href = "./index.html"; // 로그인 페이지로 이동
   });
 
   // 바깥 영역 클릭 시 알림/부서 드롭다운 모두 닫기
