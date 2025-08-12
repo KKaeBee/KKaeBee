@@ -9,6 +9,27 @@
     }[ch]));
   }
 
+  // ===== 읽음 처리 =====
+  function getDeptId() {
+    return sessionStorage.getItem("department_id");
+  }
+
+  async function markAsRead(id) {
+    const deptId = getDeptId();
+    if (!deptId || !id) return;
+
+    try {
+      const res = await fetch(`${NOTICE_API}/${id}/read`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ department_id: Number(deptId) }),
+      });
+      if (!res.ok) throw new Error(`read api 실패: ${res.status}`);
+    } catch (e) {
+      console.error("읽음 처리 실패:", e);
+    }
+  }
+
   // 드롭다운 엘리먼트 확보
   function ensureAlarmDropdown() {
     const container = $(".alarm-container");
@@ -52,17 +73,33 @@
     }
 
     ul.innerHTML = notices.map(n => `
-      <li data-id="${n.id}">
-        <strong>${escapeHTML(n.title ?? "")}</strong><br />
+      <li data-id="${n.id}" class="${n.is_read ? '' : 'unread'}">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <strong style="flex:1;white-space:normal;word-break:break-word;">
+            ${escapeHTML(n.title ?? "")}
+          </strong>
+          ${n.is_read ? '' : '<span class="red-dot" style="width:8px;height:8px;border-radius:50%;background:#f33;flex-shrink:0;"></span>'}
+        </div>
         <span>${escapeHTML(n.source ?? "")}</span>
       </li>
     `).join("");
 
-    // li 클릭 → mail_detail 이동
-    ul.onclick = (e) => {
+    // li 클릭 → 읽음 처리 후 mail_detail 이동
+    ul.onclick = async (e) => {
       const li = e.target.closest("li[data-id]");
       if (!li) return;
+
       const id = li.dataset.id;
+
+      // UI 즉시 반영
+      li.classList.remove("unread");
+      const dot = li.querySelector(".red-dot");
+      if (dot) dot.remove();
+
+      // 서버 반영: 완료 or 150ms 중 빠른 쪽
+      const done = markAsRead(id).catch(() => {});
+      await Promise.race([done, new Promise(r => setTimeout(r, 150))]);
+
       try { sessionStorage.setItem("last_notice_id", String(id)); } catch {}
       const url = new URL("./mail_detail.html", location.href);
       url.searchParams.set("id", id);

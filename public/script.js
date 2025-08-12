@@ -1,4 +1,14 @@
+function getCurrentDeptId() {
+  return sessionStorage.getItem("department_id") || localStorage.getItem("dept_id");
+}
+function alarmSeenKey() {
+  const deptId = getCurrentDeptId();
+  return deptId ? `alarm_seen_${deptId}` : "alarm_seen_unknown"; // 로그인 전 대비
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+  try { localStorage.removeItem("alarm_seen"); } catch {}
+
   // 알림 아이콘 클릭 시 드롭다운 생성 및 토글 표시
   const alarmIcon = document.querySelector(".alarm-icon");
   const alarmCount = document.querySelector(".alarm-count");
@@ -13,12 +23,20 @@ document.addEventListener("DOMContentLoaded", function () {
   alarmDropdown.style.display = "none";
   document.querySelector(".alarm-container")?.appendChild(alarmDropdown);
 
+  // 아이콘 한 번이라도 눌렀으면 기본 아이콘으로 시작
+  const seen = localStorage.getItem(alarmSeenKey()) === "1";
+  if (seen && alarmIcon) {
+    alarmIcon.src = "icon/ic_alarm_48.png";
+    if (alarmCount) alarmCount.style.display = "none";
+  }
+
   alarmIcon?.addEventListener("click", function (e) {
     e.stopPropagation();
     const isVisible = alarmDropdown.style.display === "block";
     alarmDropdown.style.display = isVisible ? "none" : "block";
 
     if (!isVisible) {
+      localStorage.setItem(alarmSeenKey(), "1"); // 아이콘 눌렀음을 영구 저장
       alarmIcon.src = "icon/ic_alarm_48.png";
       if (alarmCount) alarmCount.style.display = "none";
     }
@@ -43,8 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // 로그아웃 버튼 클릭 시 localStorage 초기화 및 로그인 페이지 이동
   const logoutBtn = document.querySelector(".logout-btn");
   logoutBtn?.addEventListener("click", function () {
-    localStorage.removeItem("deptName");
-    window.location.href = "./index.html"; // 로그인 페이지로 이동
+  localStorage.removeItem("deptName");
+  localStorage.removeItem("dept_id");
+  window.location.href = "./index.html"; // 로그인 페이지로 이동
   });
 
   // 바깥 영역 클릭 시 알림/부서 드롭다운 모두 닫기

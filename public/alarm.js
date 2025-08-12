@@ -3,6 +3,27 @@
   const NOTICE_API = `${API_ROOT}/api/notices`;
   const qs = (sel, el = document) => el.querySelector(sel);
 
+  // ====== 읽음 처리 ======
+  function getDeptId() {
+    return sessionStorage.getItem("department_id");
+  }
+
+  async function markAsRead(id) {
+    const deptId = getDeptId();
+    if (!deptId || !id) return;
+
+    try {
+      const res = await fetch(`${NOTICE_API}/${id}/read`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ department_id: Number(deptId) }),
+      });
+      if (!res.ok) throw new Error(`read api 실패: ${res.status}`);
+    } catch (e) {
+      console.error("읽음 처리 실패:", e);
+    }
+  }
+
   // ====== container 보장 ======
   function ensureToastContainer() {
     let el = document.getElementById("toastContainer");
@@ -137,13 +158,19 @@
       dismissToast(toast);
     });
 
-    qs(".toast-body", toast).addEventListener("click", () => {
+    // 토스트 클릭 -> 읽음 처리 후 이동
+    qs(".toast-body", toast).addEventListener("click", async () => {
       if (id != null) {
         try { sessionStorage.setItem("last_notice_id", String(id)); } catch {}
       }
       try { sessionStorage.setItem("last_list", "alarm"); } catch {}
+
       const target = new URL("./mail_detail.html", location.href);
       if (id != null) target.searchParams.set("id", String(id));
+
+      const done = markAsRead(id).catch(() => {});
+      await Promise.race([done, new Promise(r => setTimeout(r, 150))]);
+
       location.href = target.href;
       dismissToast(toast);
     });
