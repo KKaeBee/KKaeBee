@@ -233,6 +233,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // 읽음 표시 즉시 반영 + 서버 반영
     await markAsRead(id).catch(() => { });
 
+    // 출발지 기록: department
+    try { sessionStorage.setItem("last_list", "department"); } catch (_) {}
+
     // 읽음 처리 후 제목 링크로 이동
     window.location.href = link.href;
   });

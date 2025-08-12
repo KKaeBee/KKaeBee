@@ -60,6 +60,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     const detail = await detailRes.json(); // { department, summary, checklist }
 
     render({ base, detail });
+
+    // 출발지에 맞춰 사이드바 탭 강조
+    const src = sessionStorage.getItem("last_list") || "department";
+    let selector = null;
+    if (src === "department") selector = 'a[href="department.html"]';
+    else if (src === "all_mail") selector = 'a[href="all_mail.html"]';
+    else if (src === "important") selector = 'a[href="important.html"]';
+    else if (src === "alarm") selector = 'a[href="department.html"]'; // alarm → DEPARTMENT
+
+    if (selector) {
+      const link = document.querySelector(selector);
+      if (link) link.classList.add("orange");
+    }
   } catch (e) {
     console.error(e);
     document.getElementById("mail-detail").innerHTML =
@@ -123,9 +136,22 @@ function render({ base, detail }) {
     </section>
 
     <div class="back-btn-wrap">
-      <button class="back-btn" onclick="history.back()">← 목록</button>
+      <button class="back-btn" onclick="goBackToList()">← 목록</button>
     </div>
   `;
+
+  // 출발지별 목록 복귀
+  window.goBackToList = function () {
+    const src = sessionStorage.getItem("last_list") || "department";
+    const map = {
+      department: "department.html",
+      all_mail: "all_mail.html",
+      important: "important.html",
+      alarm: "department.html", // 요구사항: 알림에서 온 경우 department.html로
+    };
+    const target = map[src] || "department.html";
+    window.location.href = target;
+  };
 }
 
 // 별표 조회 기능

@@ -45,6 +45,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         await markAsRead(id).catch(() => { });
 
+        // 출발지 기록: important
+        try { sessionStorage.setItem("last_list", "important"); } catch (_) {}
+
         window.location.href = link.href;
     });
 

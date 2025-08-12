@@ -212,6 +212,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const id = link.dataset.goto;
     if (!id) return;
 
+    // 출발지 기록: all_mail
+    try { sessionStorage.setItem("last_list", "all_mail"); } catch (_) {}
+
     await markAsRead(id).catch(() => {});
     window.location.href = link.href;
   });
