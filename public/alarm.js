@@ -109,6 +109,8 @@
       if (id != null) {
         try { sessionStorage.setItem("last_notice_id", String(id)); } catch (_) {}
       }
+      // 출발지 기록: alarm
+      try { sessionStorage.setItem("last_list", "alarm"); } catch (_) {}
       // 2) 어떤 경로에서든 mail_detail.html을 정확히 가리키도록 URL 생성
       const target = new URL("./mail_detail.html", location.href);
       if (id != null) target.searchParams.set("id", String(id));
@@ -188,4 +190,9 @@
     const btn = document.getElementById("demoBtn");
     if (btn) btn.addEventListener("click", () => window.showLatestToasts(7, 400));
   });
+
+  // 뒤로가기 버튼 함수
+  window.goBackToAllMail = function () {
+    window.location.href = "all_mail.html";
+  };
 })();
