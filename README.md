@@ -1,5 +1,4 @@
-# FE
-
+# 금융감독원/금융위원회 규제 공지 FE
 금융감독원(FSS)·금융위원회(FSC) 크롤러에서 수집한 데이터를 기반으로  
 부서별 메일 목록 조회, 상세, 검색, 필터링, 첨부 미리보기 등을 제공하는  
 Vanilla JS + HTML 기반 프론트엔드입니다.
@@ -119,3 +118,23 @@ POST /api/notices/:id/read
 ```
 POST /api/notices/:id/star { "department_id": 3, "value": true }
 ```
+
+## 기술 스택
+
+### 프론트엔드 
+- **HTML5 / CSS3 / JavaScript(ES6+)**  
+  - 다중 HTML 페이지 구조
+  - 모듈 기반 JS(`type="module"`)로 페이지별 스크립트 분리
+- **Vanilla JS DOM 조작**
+  - 검색, 필터, 페이지네이션, 상태 동기화
+- **CSS**
+  - `style.css`: 공통 스타일
+  - 페이지 전용 CSS(`index.css` 등)
+- **UI 요소**
+  - GNB, 사이드바, 버튼/아이콘 이미지
+### 데스크톱 앱 (Electron)
+- **Electron Forge**
+  - `main.js`: 메인 프로세스
+  - `preload.js`: 프리로드 스크립트
+  - `forge.config.js`: 빌드/패키징 설정
+- Windows / macOS / Linux 빌드 지원
